@@ -1,44 +1,78 @@
-document.getElementById('login-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+    const message = document.getElementById('message');
+    const togglePassword = document.getElementById('togglePassword');
+    const rememberMe = document.getElementById('rememberMe');
+    const spinner = document.getElementById('spinner');
 
-    // Clear previous error messages
-    document.getElementById('username-error').textContent = '';
-    document.getElementById('password-error').textContent = '';
-    document.getElementById('response-message').textContent = '';
-
-    // Get form values
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    let valid = true;
-
-    // Client-side validations
-    if (!username.includes('@')) {
-        document.getElementById('username-error').textContent = 'Please enter a valid email address.';
-        valid = false;
-    }
-
-    if (password.length < 6) {
-        document.getElementById('password-error').textContent = 'Password must be at least 6 characters long.';
-        valid = false;
-    }
-
-    if (!valid) return;
-
-    // API Integration
-    fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('response-message').textContent = 'Login successful!';
-        document.getElementById('response-message').style.color = 'green';
-    })
-    .catch(error => {
-        document.getElementById('response-message').textContent = 'Login failed. Please try again.';
-        document.getElementById('response-message').style.color = 'red';
+    togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('fa-eye');
+        this.querySelector('i').classList.toggle('fa-eye-slash');
     });
+ 
+    if (localStorage.getItem('rememberMe') === 'true') {
+        emailInput.value = localStorage.getItem('email');
+        rememberMe.checked = true;
+    }
+
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        emailError.textContent = '';
+        passwordError.textContent = '';
+        message.textContent = '';
+
+        if (!validateEmail(emailInput.value)) {
+            emailError.textContent = 'Please enter a valid email address.';
+            return;
+        }
+        if (passwordInput.value.length < 6) {
+            passwordError.textContent = 'Password must be at least 6 characters long.';
+            return;
+        }
+
+        spinner.style.display = 'block';
+
+        if (rememberMe.checked) {
+            localStorage.setItem('rememberMe', 'true');
+            localStorage.setItem('email', emailInput.value);
+        } else {
+            localStorage.removeItem('rememberMe');
+            localStorage.removeItem('email');
+        }
+
+        // API call
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: emailInput.value,
+                password: passwordInput.value
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            spinner.style.display = 'none';
+            message.textContent = 'Login successful!';
+            message.style.color = 'green';
+        })
+        .catch(error => {
+            spinner.style.display = 'none';
+            message.textContent = 'Login failed. Please try again.';
+            message.style.color = 'red';
+        });
+    });
+
+    function validateEmail(email) {
+        const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return re.test(String(email).toLowerCase());
+    }
 });
