@@ -3,55 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Login Form</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Add this CSS code to styles.css or inline styles */
-        .checkbox-group {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-        }
-        .input-group {
-            display: flex;
-            align-items: center;
-        }
-        .input-group input[type="checkbox"] {
-            margin-right: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <form id="login-form">
+        <form id="loginForm" class="login-form">
             <h2>Login</h2>
-            <label for="username">Username/Email:</label>
-            <input type="text" id="username" name="username" required>
-            <span class="error" id="username-error"></span>
-            <br><br>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            <span class="error" id="password-error"></span>
-            <br><br>
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" placeholder="Enter your username" id="email" name="email" required>
+                <span class="error" id="emailError"></span>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <div class="password-input">
+                    <input type="password" placeholder="Enter your password" id="password" name="password" required>
+                    <button type="button" id="togglePassword" class="toggle-password">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <span class="error" id="passwordError"></span>
+            </div>
             <div class="checkbox-group">
-                <div class="input-group">
-                    <label for="show-password">Show Password</label>
-                    <input type="checkbox" id="show-password" name="show-password">
-                </div>
-                <div class="input-group">
-                    <label for="remember-me">Remember me</label>
-                    <input type="checkbox" id="remember-me" name="remember-me">
-                </div>
+                <input type="checkbox" id="rememberMe" name="rememberMe">
+                <label for="rememberMe">Remember me</label>
+                <a href="reset" id="forgot-password">Forgot Password?</a>
             </div>
-            <br><br>
-            <button type="submit">Login</button>
-            <div id="loading-spinner" style="display: none;">
-                <img src="loading.gif" alt="Loading...">
+            <button type="submit" id="submitBtn">Login</button>
+            <div id="message"></div>
+            <div class="register">
+                Not registered yet? <a href="register.html" id="register-page">Create an account</a>
+                <i class="fas fa-arrow-right"></i>
             </div>
-            <div id="response-message"></div>
         </form>
     </div>
-
+    <div id="spinner" class="spinner"></div>
     <script src="script.js"></script>
 </body>
 </html>
